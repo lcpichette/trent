@@ -1,39 +1,113 @@
-import Link from "next/link"
+// export default function IndexPage() {
+//   return (
+//     <>
+//       <h1>10/27</h1>
+//       <b className="bg-slate-800 text-2xl">Happy birthday Trent, celebrate!</b>
+//       <hr />
+//       <p>
+//         Everything in this website in some way is a hint towards finding the{" "}
+//         <b>key</b>. If you find the key, you&apos;ll get a surprise.
+//       </p>
+//     </>
+//   )
+// }
+"use client"
 
-import { siteConfig } from "@/config/site"
-import { buttonVariants } from "@/components/ui/button"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 
-export default function IndexPage() {
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+
+export default function Home() {
+  const [open, setOpen] = useState(false)
+  const [keyDialogOpen, setKeyDialogOpen] = useState(false)
+  const [key, setKey] = useState("")
+  const [shake, setShake] = useState(false)
+  const [flash, setFlash] = useState("")
+  const router = useRouter()
+
+  const handleKeySubmit = () => {
+    if (key === "h@ppy b1rthday tr3nt!! ! :)") {
+      setFlash("bg-green-500")
+      setTimeout(() => {
+        setKeyDialogOpen(false)
+        router.push("/congratulations")
+      }, 1000)
+    } else {
+      setShake(true)
+      setFlash("bg-red-500")
+      setTimeout(() => {
+        setShake(false)
+        setFlash("")
+      }, 820)
+    }
+  }
+
   return (
-    <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
-      <div className="flex max-w-[980px] flex-col items-start gap-2">
-        <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
-          Beautifully designed components <br className="hidden sm:inline" />
-          built with Radix UI and Tailwind CSS.
-        </h1>
-        <p className="max-w-[700px] text-lg text-muted-foreground">
-          Accessible and customizable components that you can copy and paste
-          into your apps. Free. Open Source. And Next.js 13 Ready.
-        </p>
-      </div>
-      <div className="flex gap-4">
-        <Link
-          href={siteConfig.links.docs}
-          target="_blank"
-          rel="noreferrer"
-          className={buttonVariants()}
+    <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-blue-100 to-purple-100 p-24">
+      <Button onClick={() => setOpen(true)} className="mb-8">
+        Open Command
+      </Button>
+
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandInput placeholder="Type a command..." />
+        <CommandList>
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Actions">
+            <CommandItem onSelect={() => setKeyDialogOpen(true)}>
+              Enter Key
+            </CommandItem>
+            <CommandItem onSelect={() => router.push("/")}>Home</CommandItem>
+            <CommandItem disabled>Admin</CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
+
+      <Dialog open={keyDialogOpen} onOpenChange={setKeyDialogOpen}>
+        <DialogContent
+          className={cn(
+            "transition-all duration-300 sm:max-w-[425px]",
+            shake && "animate-shake",
+            flash
+          )}
         >
-          Documentation
-        </Link>
-        <Link
-          target="_blank"
-          rel="noreferrer"
-          href={siteConfig.links.github}
-          className={buttonVariants({ variant: "outline" })}
-        >
-          GitHub
-        </Link>
-      </div>
-    </section>
+          <DialogHeader>
+            <DialogTitle>Enter the Secret Key</DialogTitle>
+          </DialogHeader>
+          <Input
+            type="text"
+            placeholder="Enter the key..."
+            value={key}
+            onChange={(e) => setKey(e.target.value)}
+          />
+          <Button onClick={handleKeySubmit}>Submit</Button>
+        </DialogContent>
+      </Dialog>
+
+      <h1 className="text-4xl font-bold tracking-wide text-slate-700">
+        Happy birthday Trent, celebrate!
+      </h1>
+      <h2 className="text-2xl italic text-slate-400">10/27</h2>
+      <p className="mt-12 max-w-2xl text-center text-xl text-slate-600">
+        Everything on this site is a clue to find the <b>key</b>. Once found
+        you&apos;ll get a surprise.
+      </p>
+    </main>
   )
 }
