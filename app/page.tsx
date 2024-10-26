@@ -60,7 +60,8 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-blue-100 to-purple-100 p-24">
+    <main className="relative flex min-h-screen flex-col items-center bg-gradient-to-br from-zinc-700 to-zinc-900 p-24">
+      <div className="bg-grain pointer-events-none absolute inset-0 opacity-90"></div>
       <Button onClick={() => setOpen(true)} className="mb-8">
         Open Command
       </Button>
@@ -100,11 +101,11 @@ export default function Home() {
         </DialogContent>
       </Dialog>
 
-      <h1 className="text-4xl font-bold tracking-wide text-slate-700">
+      <h1 className="text-4xl font-bold tracking-wide text-slate-200">
         Happy birthday Trent, celebrate!
       </h1>
       <h2 className="text-2xl italic text-slate-400">10/27</h2>
-      <p className="mt-12 max-w-2xl text-center text-xl text-slate-600">
+      <p className="mt-12 max-w-2xl text-center text-xl text-slate-300">
         Everything on this site is a clue to find the <b>key</b>. Once found
         you&apos;ll get a surprise.
       </p>
