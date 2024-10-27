@@ -21,7 +21,10 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 
-export default function Command({ storedKey }) {
+interface props {
+  storedKey: string
+}
+export default function Command({ storedKey }: props) {
   const [open, setOpen] = useState(false)
   const [keyDialogOpen, setKeyDialogOpen] = useState(false)
   const [key, setKey] = useState("")
