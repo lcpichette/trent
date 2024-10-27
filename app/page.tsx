@@ -1,105 +1,29 @@
-// export default function IndexPage() {
-//   return (
-//     <>
-//       <h1>10/27</h1>
-//       <b className="bg-slate-800 text-2xl">Happy birthday Trent, celebrate!</b>
-//       <hr />
-//       <p>
-//         Everything in this website in some way is a hint towards finding the{" "}
-//         <b>key</b>. If you find the key, you&apos;ll get a surprise.
-//       </p>
-//     </>
-//   )
-// }
-"use client"
+"use ssr"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+// import { createClient } from "@/utils/supabase/server"
+import { createClient } from "@supabase/supabase-js"
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
+import Command from "@/components/custom/Command"
 
-export default function Home() {
-  const [open, setOpen] = useState(false)
-  const [keyDialogOpen, setKeyDialogOpen] = useState(false)
-  const [key, setKey] = useState("")
-  const [shake, setShake] = useState(false)
-  const [flash, setFlash] = useState("")
-  const router = useRouter()
+const supabaseUrl = "https://abrtfetijieziwrwphln.supabase.co"
+const supabaseKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFicnRmZXRpamlleml3cndwaGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk5ODYxNDMsImV4cCI6MjA0NTU2MjE0M30.bUzGRHSAgZ9JZ9XZvAtHty47n47aJlCs-NJw-5xnpHk"
+const supabase = createClient(supabaseUrl, supabaseKey)
 
-  const handleKeySubmit = () => {
-    if (key === "h@ppy b1rthday tr3nt!! ! :)") {
-      setFlash("bg-green-500")
-      setTimeout(() => {
-        setKeyDialogOpen(false)
-        router.push("/congratulations")
-      }, 1000)
-    } else {
-      setShake(true)
-      setFlash("bg-red-500")
-      setTimeout(() => {
-        setShake(false)
-        setFlash("")
-      }, 820)
-    }
-  }
+export default async function Home() {
+  const { data: storedKey, error } = await supabase
+    .from("encryptedkey")
+    .select("*")
 
   return (
     <main className="relative flex min-h-screen flex-col items-center bg-gradient-to-br from-zinc-700 to-zinc-900 p-24">
       <div className="bg-grain pointer-events-none absolute inset-0 opacity-90"></div>
-      <Button onClick={() => setOpen(true)} className="mb-8">
-        Open Command
-      </Button>
 
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a command..." />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Actions">
-            <CommandItem onSelect={() => setKeyDialogOpen(true)}>
-              Enter Key
-            </CommandItem>
-            <CommandItem onSelect={() => router.push("/")}>Home</CommandItem>
-            <CommandItem disabled>Admin</CommandItem>
-          </CommandGroup>
-        </CommandList>
-      </CommandDialog>
-
-      <Dialog open={keyDialogOpen} onOpenChange={setKeyDialogOpen}>
-        <DialogContent
-          className={cn(
-            "transition-all duration-300 sm:max-w-[425px]",
-            shake && "animate-shake",
-            flash
-          )}
-        >
-          <DialogHeader>
-            <DialogTitle>Enter the Secret Key</DialogTitle>
-          </DialogHeader>
-          <Input
-            type="text"
-            placeholder="Enter the key..."
-            value={key}
-            onChange={(e) => setKey(e.target.value)}
-          />
-          <Button onClick={handleKeySubmit}>Submit</Button>
-        </DialogContent>
-      </Dialog>
+      {storedKey && (storedKey || []).length > 0 ? (
+        <Command storedKey={storedKey[0].title} />
+      ) : (
+        <p>Loading.</p>
+      )}
 
       <h1 className="text-4xl font-bold tracking-wide text-slate-200">
         Happy birthday Trent, celebrate!
